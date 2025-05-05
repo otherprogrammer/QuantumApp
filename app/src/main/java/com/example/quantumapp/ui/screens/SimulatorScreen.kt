@@ -1,88 +1,130 @@
 package com.example.quantumapp.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.*
-import androidx.navigation.NavController
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.foundation.background
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SimulatorScreen(navController: NavController) {
     var qubitState by remember { mutableStateOf("|0⟩") }
     var selectedGate by remember { mutableStateOf("Hadamard") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Simulador Cuántico", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        QubitAnimation(state = qubitState)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AnimatedContent(targetState = qubitState, label = "qubitState") { state ->
-            Text(
-                text = "Estado: $state",
-                style = MaterialTheme.typography.titleLarge
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Simulador Cuántico") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Atrás"
+                        )
+                    }
+                }
             )
         }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            QubitAnimation(state = qubitState)
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Selecciona una compuerta:", style = MaterialTheme.typography.bodyMedium)
+            AnimatedContent(
+                targetState = qubitState,
+                transitionSpec = {
+                    fadeIn(tween(500)) togetherWith fadeOut(tween(500))
+                },
+                label = "qubitState"
+            ) { state ->
+                Text("Estado actual: $state", style = MaterialTheme.typography.titleLarge)
+            }
 
-        // MOSTRAR EL DROPDOWN
-        DropdownMenuGates(
-            selectedGate = selectedGate,
-            onGateSelected = { selectedGate = it }
-        )
+            Spacer(modifier = Modifier.height(24.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Text("Selecciona una compuerta:", style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(8.dp))
 
-        // BOTÓN PARA APLICAR LA COMPUERTA
-        Button(onClick = {
-            qubitState = applyGate(selectedGate, qubitState)
-        }) {
-            Text("Aplicar Compuerta")
+            DropdownMenuGates(selectedGate = selectedGate, onGateSelected = {
+                selectedGate = it
+            })
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                qubitState = applyGate(qubitState, selectedGate)
+            }) {
+                Text("Aplicar $selectedGate")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            GateExplanation(gate = selectedGate)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedButton(onClick = {
+                qubitState = "|0⟩"
+            }) {
+                Text("Reiniciar Estado")
+            }
         }
-
-        // EXPLICACIÓN DE LA COMPUERTA
-        GateExplanation(gate = selectedGate)
     }
 }
 
-fun applyGate(gate: String, currentState: String): String {
+
+// Lógica de transformación cuántica simple (no física real)
+fun applyGate(current: String, gate: String): String {
     return when (gate) {
-        "Hadamard" -> {
-            if (currentState == "|0⟩") "(|0⟩ + |1⟩) / √2"
-            else if (currentState == "|1⟩") "(|0⟩ - |1⟩) / √2"
-            else "|0⟩"
-        }
-        "Pauli-X" -> {
-            if (currentState == "|0⟩") "|1⟩"
-            else "|0⟩"
-        }
-        "Pauli-Z" -> {
-            if (currentState == "|1⟩") "-|1⟩"
-            else currentState
-        }
-        else -> currentState
+        "Hadamard" -> if (current == "|0⟩") "(|0⟩ + |1⟩) / √2" else "(|0⟩ - |1⟩) / √2"
+        "Pauli-X" -> if (current == "|0⟩") "|1⟩" else "|0⟩"
+        "Pauli-Z" -> if (current == "|1⟩") "-|1⟩" else current
+        else -> current
     }
 }
 
@@ -120,12 +162,11 @@ fun QubitAnimation(state: String) {
         else -> Color.Gray
     }
 
-    Crossfade(targetState = color, label = "qubitColor") { currentColor ->
+    Crossfade(targetState = color, animationSpec = tween(500), label = "qubitColor") { currentColor ->
         Box(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .padding(8.dp)
                 .background(currentColor),
             contentAlignment = Alignment.Center
         ) {
@@ -137,13 +178,14 @@ fun QubitAnimation(state: String) {
 @Composable
 fun GateExplanation(gate: String) {
     val explanation = when (gate) {
-        "Hadamard" -> "Hadamard transforma el qubit en una superposición entre |0⟩ y |1⟩."
-        "Pauli-X" -> "Pauli-X actúa como una NOT cuántica: cambia |0⟩ por |1⟩ y viceversa."
-        "Pauli-Z" -> "Pauli-Z cambia el signo del estado |1⟩ sin afectar |0⟩."
+        "Hadamard" -> "La compuerta Hadamard coloca el qubit en una superposición entre |0⟩ y |1⟩."
+        "Pauli-X" -> "La compuerta Pauli-X actúa como una NOT: cambia |0⟩ por |1⟩ y viceversa."
+        "Pauli-Z" -> "Pauli-Z invierte la fase del estado |1⟩, dejando |0⟩ intacto."
         else -> ""
     }
 
-    Spacer(modifier = Modifier.height(8.dp))
-    Text("¿Qué hace $gate?", style = MaterialTheme.typography.bodyMedium)
-    Text(explanation, style = MaterialTheme.typography.bodySmall)
+    Column(modifier = Modifier.padding(top = 8.dp)) {
+        Text("¿Qué hace la compuerta $gate?", style = MaterialTheme.typography.bodyMedium)
+        Text(explanation, style = MaterialTheme.typography.bodySmall)
+    }
 }
