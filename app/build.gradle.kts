@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -51,6 +52,12 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     // Material3 (ya debería estar manejado por el BOM si usas Compose)
     implementation(libs.androidx.material3)
+    // Firebase BOM para manejar las versiones de Firebase
+    implementation(platform("com.google.firebase:firebase-bom:30.3.0"))
+    // Dependencias específicas de Firebase sin especificar versiones
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-database")
     // Otras dependencias
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("androidx.navigation:navigation-compose:2.8.9") //para navegacion entre pantallas
@@ -59,6 +66,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0") //para imagenes o iconos externos desde la web
     implementation("com.google.accompanist:accompanist-navigation-animation:0.34.0") //para navegacion animada
     implementation("androidx.compose.material:material-icons-extended") // mas iconos
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -69,3 +79,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+apply(plugin = "com.google.gms.google-services")
