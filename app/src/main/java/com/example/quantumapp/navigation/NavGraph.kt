@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.quantumapp.ui.screens.*
 
 sealed class Screen(val route: String) {
+    object Splash : Screen("splash")
     object Login : Screen("login")
     object Register : Screen("register")
     object Home : Screen("home")
@@ -19,6 +20,10 @@ sealed class Screen(val route: String) {
 @Composable
 fun QuantumNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.Login.route) {
+        composable(Screen.Splash.route) {
+            SplashScreen(navController)
+        }
+
         composable(Screen.Login.route) {
             LoginScreen(
                 onLoginSuccess = {
