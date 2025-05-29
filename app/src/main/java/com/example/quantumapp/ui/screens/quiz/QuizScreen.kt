@@ -1,4 +1,4 @@
-package com.example.quantumapp.ui.screens
+package com.example.quantumapp.ui.screens.quiz
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons

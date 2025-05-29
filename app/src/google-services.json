@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "34472728941",
+    "project_id": "quantumapp-50607",
+    "storage_bucket": "quantumapp-50607.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34472728941:android:e247c180d8612c59bc2264",
+        "android_client_info": {
+          "package_name": "com.example.quantumapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOw26aVWxKURfK-5fXAPN1_gB0UQ_Bpo8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

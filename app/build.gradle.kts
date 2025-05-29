@@ -69,6 +69,23 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    // Lottie para animaciones
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
+
+    // Accompanist completo
+    implementation("com.google.accompanist:accompanist-flowlayout:0.34.0")
+    implementation("com.google.accompanist:accompanist-pager:0.34.0")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.34.0")
+    implementation("com.google.accompanist:accompanist-placeholder-material:0.34.0")
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.34.0")
+
+    // Motion Compose
+    implementation("androidx.compose.animation:animation:1.6.1")
+    implementation("androidx.compose.animation:animation-core:1.6.1")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
+
     // Test dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
