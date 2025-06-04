@@ -2,13 +2,12 @@ package com.example.quantumapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.quantumapp.model.CircuitStep
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-data class CircuitStep(val gate: String = "", val result: String = "")
 
 sealed class CircuitState {
     object Loading : CircuitState()
@@ -58,18 +57,11 @@ class CircuitViewModel : ViewModel() {
             .document(userId)
             .collection("circuitHistory")
             .add(circuitStep)
-            .addOnSuccessListener {
-                // Opcional: Puedes llamar a fetchCircuitHistory() para actualizar la lista
-            }
-            .addOnFailureListener { e ->
-                // Manejar error
-            }
     }
+
     private var currentCircuitId: String? = null
 
-    fun getCurrentCircuitId(): String? {
-        return currentCircuitId
-    }
+    fun getCurrentCircuitId(): String? = currentCircuitId
 
     fun createOrGetCurrentCircuit(onComplete: (String?) -> Unit) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return onComplete(null)
@@ -77,7 +69,7 @@ class CircuitViewModel : ViewModel() {
             val newCircuitRef = db.collection("users")
                 .document(userId)
                 .collection("circuits")
-                .document() // genera un nuevo id
+                .document()
             currentCircuitId = newCircuitRef.id
 
             newCircuitRef.set(

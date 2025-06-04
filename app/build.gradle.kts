@@ -68,9 +68,18 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended") // mas iconos
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+
+    // ExoPlayer
+    implementation("androidx.media3:media3-exoplayer:1.3.1") // Reproductor principal
+    implementation("androidx.media3:media3-ui:1.3.1") // Componentes de UI de ExoPlayer (aunque no los usaremos directamente para el fondo)
+    implementation("androidx.media3:media3-common:1.3.1") // Utilidades comunes
 
     // Lottie para animaciones
     implementation("com.airbnb.android:lottie-compose:6.4.0")
+
+    // WebView
+    implementation("androidx.webkit:webkit:1.11.0")
 
     // Accompanist completo
     implementation("com.google.accompanist:accompanist-flowlayout:0.34.0")
