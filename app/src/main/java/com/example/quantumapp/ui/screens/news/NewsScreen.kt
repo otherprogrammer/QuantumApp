@@ -56,7 +56,7 @@ fun NewsScreen(
                             text = "Noticias Cuánticas",
                             color = Color(0xFF00FFFF),
                             style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold // Añade negrita para más impacto
+                            fontWeight = FontWeight.Bold
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
@@ -99,9 +99,8 @@ fun NewsScreen(
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 items(articles) { article ->
-                                    // Envuelve la tarjeta en AnimatedVisibility para animaciones de entrada
                                     AnimatedVisibility(
-                                        visible = true, // Siempre visible una vez cargado
+                                        visible = true,
                                         enter = slideInVertically(animationSpec = tween(durationMillis = 500)) { it / 2 } + fadeIn(animationSpec = tween(durationMillis = 500))
                                     ) {
                                         NewsArticleCard(article = article) {
@@ -158,8 +157,9 @@ fun NewsArticleCard(article: NewsArticle, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
+            // Muestra el título traducido si está disponible, de lo contrario el original
             Text(
-                text = article.title,
+                text = article.translatedTitle ?: article.title, // <--- CAMBIO CLAVE AQUÍ
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF00FFFF),
@@ -169,13 +169,16 @@ fun NewsArticleCard(article: NewsArticle, onClick: () -> Unit) {
             Spacer(modifier = Modifier.height(4.dp))
 
             // Limpia las etiquetas HTML de la descripción
-            val cleanDescription = article.description?.let {
-                it.replace(Regex("<.*?>"), "") // Elimina todas las etiquetas HTML
-                    .replace("&nbsp;", " ") // Reemplaza entidades HTML comunes
-                    .trim() // Elimina espacios en blanco al inicio/fin
+            val cleanOriginalDescription = article.description?.let {
+                it.replace(Regex("<.*?>"), "")
+                    .replace("&nbsp;", " ")
+                    .trim()
             }
 
-            cleanDescription?.let { description ->
+            // Muestra la descripción traducida si está disponible, de lo contrario la original limpia
+            val displayDescription = article.translatedDescription ?: cleanOriginalDescription
+
+            displayDescription?.let { description ->
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodyMedium,
@@ -183,7 +186,7 @@ fun NewsArticleCard(article: NewsArticle, onClick: () -> Unit) {
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(8.dp)) // Aumenta el espaciado
+                Spacer(modifier = Modifier.height(8.dp))
             }
 
             Row(
@@ -191,15 +194,13 @@ fun NewsArticleCard(article: NewsArticle, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Formatea la fecha de publicación
                 article.pubDate?.let { pubDate ->
                     val formattedDate = try {
-                        // Intenta parsear varios formatos comunes de fecha RSS
                         val parser = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
                         val date = parser.parse(pubDate)
-                        SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
+                        SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date) // Formato de fecha más corto
                     } catch (e: Exception) {
-                        pubDate // Si falla el parseo, usa la fecha original
+                        pubDate
                     }
                     Text(
                         text = formattedDate,
